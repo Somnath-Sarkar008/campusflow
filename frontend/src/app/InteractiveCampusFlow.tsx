@@ -25,7 +25,9 @@ import {
   XCircle,
 } from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+const API =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://campusflow-ui3o.onrender.com/api";
 
 type Page = "dashboard" | "students" | "academics" | "attendance" | "facilities" | "bookings";
 type AcademicTab = "departments" | "courses" | "subjects";
