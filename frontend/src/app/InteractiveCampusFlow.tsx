@@ -25,7 +25,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-const API = "http://localhost:3000/api";
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
 
 type Page = "dashboard" | "students" | "academics" | "attendance" | "facilities" | "bookings";
 type AcademicTab = "departments" | "courses" | "subjects";
@@ -33,14 +33,15 @@ type FacilityTab = "buildings" | "rooms" | "resources";
 
 type User = { id?: string; firstName: string; lastName: string; email: string; roles?: string[] };
 type Stats = Record<string, number>;
-type Student = any;
-type Booking = any;
-type Department = any;
-type Course = any;
-type Subject = any;
-type Building = any;
-type Room = any;
-type Resource = any;
+type CampusRecord = Record<string, any>;
+type Student = CampusRecord;
+type Booking = CampusRecord;
+type Department = CampusRecord;
+type Course = CampusRecord;
+type Subject = CampusRecord;
+type Building = CampusRecord;
+type Room = CampusRecord;
+type Resource = CampusRecord;
 
 const semesters = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => `SEMESTER_${n}`);
 const roomTypes = ["CLASSROOM", "LAB", "SEMINAR_HALL", "AUDITORIUM", "OFFICE", "OTHER"];
@@ -257,7 +258,7 @@ export default function InteractiveCampusFlow() {
       </section>
     </div>
 
-    {selectedStudent && <Modal title="Student details" close={() => setSelectedStudent(null)}><div className="grid gap-4 sm:grid-cols-2">{[["Name", `${selectedStudent.user?.firstName || ""} ${selectedStudent.user?.lastName || ""}`],["Email", selectedStudent.user?.email],["Roll number", selectedStudent.rollNumber],["Registration", selectedStudent.registrationNo],["Course", selectedStudent.course?.name],["Semester", selectedStudent.currentSemester]].map(([a,b]) => <div key={a} className="rounded-xl border border-white/10 bg-white/[0.03] p-4"><div className="text-xs uppercase text-slate-500">{a}</div><div className="mt-1 font-medium">{b || "—"}</div></div>)}</div>{selectedStudent.enrollments?.length > 0 && <div className="mt-6"><h3 className="font-semibold">Enrollments</h3><div className="mt-3 space-y-2">{selectedStudent.enrollments.map((e: any) => <div key={e.id} className="flex justify-between rounded-xl border border-white/10 p-3 text-sm"><span>{e.subject?.name}</span><span className="text-slate-500">{e.status}</span></div>)}</div></div>}</Modal>}
+    {selectedStudent && <Modal title="Student details" close={() => setSelectedStudent(null)}><div className="grid gap-4 sm:grid-cols-2">{[["Name", `${selectedStudent.user?.firstName || ""} ${selectedStudent.user?.lastName || ""}`],["Email", selectedStudent.user?.email],["Roll number", selectedStudent.rollNumber],["Registration", selectedStudent.registrationNo],["Course", selectedStudent.course?.name],["Semester", selectedStudent.currentSemester]].map(([a,b]) => <div key={a} className="rounded-xl border border-white/10 bg-white/[0.03] p-4"><div className="text-xs uppercase text-slate-500">{a}</div><div className="mt-1 font-medium">{b || "—"}</div></div>)}</div>{selectedStudent.enrollments?.length > 0 && <div className="mt-6"><h3 className="font-semibold">Enrollments</h3><div className="mt-3 space-y-2">{selectedStudent.enrollments.map((e: any) => <div key={e.id} className="flex justify-between rounded-xl border border-white/10 p-3 text-sm"><span>{e.subject?.name}</span><span className="text-slate-500">{e.status}</span></div>)}</div></div></Modal>}
 
     {modal === "department" && <Modal title="Add department" close={() => setModal(null)}><form onSubmit={createDepartment} className="space-y-4"><Field label="Name"><input name="name" required className="input" /></Field><Field label="Code"><input name="code" required className="input" /></Field><Field label="Description"><textarea name="description" className="input min-h-24" /></Field><Submit /></form></Modal>}
     {modal === "course" && <Modal title="Add course" close={() => setModal(null)}><form onSubmit={createCourse} className="space-y-4"><SelectField label="Department" name="departmentId" options={departments.map(d => [d.id, `${d.code} — ${d.name}`])} /><Field label="Name"><input name="name" required className="input" /></Field><Field label="Code"><input name="code" required className="input" /></Field><Field label="Duration (years)"><input name="duration" type="number" min="1" defaultValue="4" required className="input" /></Field><Submit /></form></Modal>}
