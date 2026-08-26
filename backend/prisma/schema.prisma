@@ -1,0 +1,344 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RoleName {
+  STUDENT
+  FACULTY
+  TECHNICIAN
+  SECURITY
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum RoomType {
+  CLASSROOM
+  LAB
+  SEMINAR_HALL
+  AUDITORIUM
+  OFFICE
+  OTHER
+}
+
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  BOOKED
+  MAINTENANCE
+  RESTRICTED
+}
+
+enum ResourceType {
+  PROJECTOR
+  COMPUTER
+  AIR_CONDITIONER
+  LAB_EQUIPMENT
+  OTHER
+}
+
+enum ResourceStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+  RETIRED
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+  COMPLETED
+}
+
+enum EnrollmentStatus {
+  ACTIVE
+  COMPLETED
+  DROPPED
+  SUSPENDED
+}
+
+enum Semester {
+  SEMESTER_1
+  SEMESTER_2
+  SEMESTER_3
+  SEMESTER_4
+  SEMESTER_5
+  SEMESTER_6
+  SEMESTER_7
+  SEMESTER_8
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model User {
+  id            String   @id @default(uuid()) @db.Uuid
+  email         String   @unique @db.VarChar(255)
+  passwordHash  String   @map("password_hash")
+  firstName     String   @map("first_name") @db.VarChar(100)
+  lastName      String   @map("last_name") @db.VarChar(100)
+  isActive      Boolean  @default(true) @map("is_active")
+  emailVerified Boolean  @default(false) @map("email_verified")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  roles              UserRole[]
+  bookings           Booking[]
+  studentProfile     StudentProfile?
+  attendanceSessions AttendanceSession[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        RoleName @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  users UserRole[]
+
+  @@map("roles")
+}
+
+model UserRole {
+  userId     String   @map("user_id") @db.Uuid
+  roleId     Int      @map("role_id")
+  assignedAt DateTime @default(now()) @map("assigned_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model Building {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(150)
+  code        String   @unique @db.VarChar(30)
+  description String?
+  address     String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  floors Floor[]
+
+  @@map("buildings")
+}
+
+model Floor {
+  id          Int      @id @default(autoincrement())
+  buildingId  Int      @map("building_id")
+  floorNumber Int      @map("floor_number")
+  name        String?  @db.VarChar(100)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  building Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  rooms    Room[]
+
+  @@unique([buildingId, floorNumber])
+  @@index([buildingId])
+  @@map("floors")
+}
+
+model Room {
+  id          Int        @id @default(autoincrement())
+  floorId     Int        @map("floor_id")
+  name        String     @db.VarChar(150)
+  roomNumber  String     @map("room_number") @db.VarChar(30)
+  type        RoomType
+  capacity    Int
+  status      RoomStatus @default(AVAILABLE)
+  description String?
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  floor     Floor      @relation(fields: [floorId], references: [id], onDelete: Cascade)
+  resources Resource[]
+
+  @@unique([floorId, roomNumber])
+  @@index([floorId])
+  @@index([status])
+  @@map("rooms")
+}
+
+model Resource {
+  id           Int            @id @default(autoincrement())
+  roomId       Int            @map("room_id")
+  name         String         @db.VarChar(150)
+  type         ResourceType
+  status       ResourceStatus @default(AVAILABLE)
+  serialNumber String?        @unique @map("serial_number") @db.VarChar(100)
+  description  String?
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  room     Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  bookings Booking[]
+
+  @@index([roomId])
+  @@index([status])
+  @@index([type])
+  @@map("resources")
+}
+
+model Booking {
+  id          String        @id @default(uuid()) @db.Uuid
+  resourceId  Int           @map("resource_id")
+  userId      String        @map("user_id") @db.Uuid
+  startTime   DateTime      @map("start_time") @db.Timestamptz(6)
+  endTime     DateTime      @map("end_time") @db.Timestamptz(6)
+  status      BookingStatus @default(PENDING)
+  purpose     String
+  createdAt   DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime      @updatedAt @map("updated_at") @db.Timestamptz(6)
+  cancelledAt DateTime?     @map("cancelled_at") @db.Timestamptz(6)
+
+  resource Resource @relation(fields: [resourceId], references: [id], onDelete: Restrict)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([resourceId])
+  @@index([userId])
+  @@index([status])
+  @@index([startTime])
+  @@index([endTime])
+  @@index([resourceId, startTime, endTime])
+  @@map("bookings")
+}
+
+model Department {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(150)
+  code        String   @unique @db.VarChar(20)
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  courses Course[]
+
+  @@map("departments")
+}
+
+model Course {
+  id           Int      @id @default(autoincrement())
+  departmentId Int      @map("department_id")
+  name         String   @db.VarChar(150)
+  code         String   @unique @db.VarChar(30)
+  duration     Int      @default(4)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  department Department       @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  students   StudentProfile[]
+  subjects   Subject[]
+
+  @@index([departmentId])
+  @@map("courses")
+}
+
+model Subject {
+  id          Int      @id @default(autoincrement())
+  courseId    Int      @map("course_id")
+  name        String   @db.VarChar(150)
+  code        String   @unique @db.VarChar(30)
+  credits     Int
+  semester    Semester
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  course             Course              @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  enrollments        Enrollment[]
+  attendanceSessions AttendanceSession[]
+
+  @@index([courseId])
+  @@index([semester])
+  @@map("subjects")
+}
+
+model StudentProfile {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @unique @map("user_id") @db.Uuid
+  courseId        Int      @map("course_id")
+  rollNumber      String   @unique @map("roll_number") @db.VarChar(50)
+  registrationNo  String   @unique @map("registration_no") @db.VarChar(50)
+  admissionYear   Int      @map("admission_year")
+  currentSemester Semester @map("current_semester")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course            Course             @relation(fields: [courseId], references: [id], onDelete: Restrict)
+  enrollments       Enrollment[]
+  attendanceRecords AttendanceRecord[]
+
+  @@index([courseId])
+  @@index([currentSemester])
+  @@map("student_profiles")
+}
+
+model Enrollment {
+  id           Int              @id @default(autoincrement())
+  studentId    String           @map("student_id") @db.Uuid
+  subjectId    Int              @map("subject_id")
+  semester     Semester
+  academicYear String           @map("academic_year") @db.VarChar(20)
+  status       EnrollmentStatus @default(ACTIVE)
+  enrolledAt   DateTime         @default(now()) @map("enrolled_at") @db.Timestamptz(6)
+
+  student StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject Subject        @relation(fields: [subjectId], references: [id], onDelete: Restrict)
+
+  @@unique([studentId, subjectId, academicYear])
+  @@index([studentId])
+  @@index([subjectId])
+  @@index([semester])
+  @@index([status])
+  @@map("enrollments")
+}
+
+model AttendanceSession {
+  id          Int      @id @default(autoincrement())
+  subjectId   Int      @map("subject_id")
+  markedById  String   @map("marked_by_id") @db.Uuid
+  sessionDate DateTime @map("session_date") @db.Date
+  topic       String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  subject  Subject            @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  markedBy User               @relation(fields: [markedById], references: [id], onDelete: Restrict)
+  records  AttendanceRecord[]
+
+  @@unique([subjectId, sessionDate])
+  @@index([subjectId])
+  @@index([markedById])
+  @@index([sessionDate])
+  @@map("attendance_sessions")
+}
+
+model AttendanceRecord {
+  id        Int              @id @default(autoincrement())
+  sessionId Int              @map("session_id")
+  studentId String           @map("student_id") @db.Uuid
+  status    AttendanceStatus @default(PRESENT)
+  markedAt  DateTime         @default(now()) @map("marked_at")
+
+  session AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, studentId])
+  @@index([sessionId])
+  @@index([studentId])
+  @@index([status])
+  @@map("attendance_records")
+}
