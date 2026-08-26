@@ -1,0 +1,27 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: campusflow-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: campusflow
+      POSTGRES_PASSWORD: campusflow_dev
+      POSTGRES_DB: campusflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - campusflow_postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    container_name: campusflow-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - campusflow_redis_data:/data
+
+volumes:
+  campusflow_postgres_data:
+  campusflow_redis_data:
