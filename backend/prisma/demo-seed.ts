@@ -1,5 +1,7 @@
 import 'dotenv/config';
-import { PrismaClient, PrismaPg, RoleName, Semester, AttendanceStatus, BookingStatus } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { RoleName, Semester, AttendanceStatus, BookingStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
@@ -27,21 +29,9 @@ async function main() {
   const faculty = await prisma.user.findUniqueOrThrow({ where: { email: 'faculty@campusflow.local' } });
   const passwordHash = await bcrypt.hash('CampusFlow@123', 12);
 
-  const cse = await prisma.department.upsert({
-    where: { code: 'CSE' },
-    update: {},
-    create: { name: 'Computer Science & Engineering', code: 'CSE', description: 'Computing, software engineering and intelligent systems.' },
-  });
-  const ece = await prisma.department.upsert({
-    where: { code: 'ECE' },
-    update: {},
-    create: { name: 'Electronics & Communication Engineering', code: 'ECE', description: 'Electronics, communication and embedded systems.' },
-  });
-  const aiml = await prisma.department.upsert({
-    where: { code: 'AIML' },
-    update: {},
-    create: { name: 'Artificial Intelligence & Machine Learning', code: 'AIML', description: 'Applied AI, machine learning and data-driven systems.' },
-  });
+  const cse = await prisma.department.upsert({ where: { code: 'CSE' }, update: {}, create: { name: 'Computer Science & Engineering', code: 'CSE', description: 'Computing, software engineering and intelligent systems.' } });
+  const ece = await prisma.department.upsert({ where: { code: 'ECE' }, update: {}, create: { name: 'Electronics & Communication Engineering', code: 'ECE', description: 'Electronics, communication and embedded systems.' } });
+  const aiml = await prisma.department.upsert({ where: { code: 'AIML' }, update: {}, create: { name: 'Artificial Intelligence & Machine Learning', code: 'AIML', description: 'Applied AI, machine learning and data-driven systems.' } });
 
   const cseCourse = await prisma.course.upsert({ where: { code: 'BTECH-CSE' }, update: {}, create: { departmentId: cse.id, name: 'B.Tech Computer Science & Engineering', code: 'BTECH-CSE', duration: 4 } });
   const aimlCourse = await prisma.course.upsert({ where: { code: 'BTECH-AIML' }, update: {}, create: { departmentId: aiml.id, name: 'B.Tech Artificial Intelligence & ML', code: 'BTECH-AIML', duration: 4 } });
@@ -64,11 +54,7 @@ async function main() {
 
   for (let i = 0; i < students.length; i++) {
     const [firstName, lastName, email, rollNumber, registrationNo] = students[i];
-    const user = await prisma.user.upsert({
-      where: { email },
-      update: { firstName, lastName, emailVerified: true },
-      create: { email, passwordHash, firstName, lastName, emailVerified: true },
-    });
+    const user = await prisma.user.upsert({ where: { email }, update: { firstName, lastName, emailVerified: true }, create: { email, passwordHash, firstName, lastName, emailVerified: true } });
     await prisma.userRole.upsert({ where: { userId_roleId: { userId: user.id, roleId: role.id } }, update: {}, create: { userId: user.id, roleId: role.id } });
     const courseId = i < 10 ? cseCourse.id : i === 10 ? aimlCourse.id : eceCourse.id;
     const semester = i % 2 === 0 ? Semester.SEMESTER_5 : Semester.SEMESTER_4;
@@ -78,34 +64,25 @@ async function main() {
       create: { userId: user.id, courseId, rollNumber, registrationNo, admissionYear: 2024, currentSemester: semester },
     });
     for (const subject of subjects.filter((s) => s.courseId === courseId).slice(0, 5)) {
-      await prisma.enrollment.upsert({
-        where: { studentId_subjectId_academicYear: { studentId: profile.id, subjectId: subject.id, academicYear: '2026-27' } },
-        update: {},
-        create: { studentId: profile.id, subjectId: subject.id, semester, academicYear: '2026-27' },
-      });
+      await prisma.enrollment.upsert({ where: { studentId_subjectId_academicYear: { studentId: profile.id, subjectId: subject.id, academicYear: '2026-27' } }, update: {}, create: { studentId: profile.id, subjectId: subject.id, semester, academicYear: '2026-27' } });
     }
   }
 
   const rooms = await prisma.room.findMany({ include: { resources: true } });
-  const room101 = rooms.find((r) => r.roomNumber === '101');
-  const room102 = rooms.find((r) => r.roomNumber === '102');
-  const lab201 = rooms.find((r) => r.roomNumber === '201');
-  const lab202 = rooms.find((r) => r.roomNumber === '202');
-  const seminar = rooms.find((r) => r.roomNumber === 'SH-01');
-  const bookingRooms = [room101, lab201, seminar, room102, lab202].filter(Boolean) as typeof rooms;
+  const bookingRooms = ['101', '201', 'SH-01', '102', '202'].map((number) => rooms.find((r) => r.roomNumber === number)).filter(Boolean) as typeof rooms;
   const resources = bookingRooms.flatMap((r) => r.resources).slice(0, 5);
 
   const now = new Date();
   const bookingData = [
-    ['Data Structures Lecture', 1, 2, BookingStatus.APPROVED],
-    ['DBMS Practical', 1, 3, BookingStatus.APPROVED],
-    ['AI & ML Guest Lecture', 2, 4, BookingStatus.PENDING],
-    ['Operating Systems Lecture', 3, 5, BookingStatus.APPROVED],
-    ['Web Development Lab', 4, 6, BookingStatus.APPROVED],
-    ['Faculty Meeting', 1, 8, BookingStatus.PENDING],
+    ['Data Structures Lecture', 1, BookingStatus.APPROVED],
+    ['DBMS Practical', 1, BookingStatus.APPROVED],
+    ['AI & ML Guest Lecture', 2, BookingStatus.PENDING],
+    ['Operating Systems Lecture', 3, BookingStatus.APPROVED],
+    ['Web Development Lab', 4, BookingStatus.APPROVED],
+    ['Faculty Meeting', 1, BookingStatus.PENDING],
   ] as const;
   for (let i = 0; i < bookingData.length; i++) {
-    const [purpose, startHour, roomIndex, status] = bookingData[i];
+    const [purpose, startHour, status] = bookingData[i];
     const resource = resources[i % Math.max(resources.length, 1)];
     if (!resource) continue;
     const start = new Date(now); start.setDate(now.getDate() + Math.floor(i / 2)); start.setHours(startHour + 8, 0, 0, 0);
