@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050b16;
+  --foreground: #f8fafc;
 }
 
 @theme inline {
@@ -12,32 +12,66 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
+  margin: 0;
+  background:
+    radial-gradient(circle at 12% 8%, rgb(37 99 235 / 0.12), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgb(124 58 237 / 0.10), transparent 26rem),
+    #050b16;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: rgb(59 130 246 / 0.35);
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #07101e;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(100 116 139 / 0.35);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(96 165 250 / 0.55);
 }
 
 .input {
   width: 100%;
   border: 1px solid rgb(255 255 255 / 0.1);
   border-radius: 0.75rem;
-  background: rgb(0 0 0 / 0.2);
+  background: rgb(2 6 23 / 0.48);
   padding: 0.75rem 1rem;
   color: white;
   outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.input:hover {
+  border-color: rgb(255 255 255 / 0.17);
 }
 
 .input:focus {
-  border-color: rgb(59 130 246 / 0.7);
-  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.08);
+  border-color: rgb(59 130 246 / 0.75);
+  background: rgb(15 23 42 / 0.7);
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.09), 0 8px 30px rgb(0 0 0 / 0.12);
 }
 
 .input::placeholder {
@@ -49,18 +83,19 @@ body {
   align-items: center;
   gap: 0.5rem;
   border-radius: 0.75rem;
-  background: rgb(255 255 255 / 0.07);
-  border: 1px solid rgb(255 255 255 / 0.1);
+  background: linear-gradient(135deg, rgb(59 130 246 / 0.18), rgb(99 102 241 / 0.12));
+  border: 1px solid rgb(96 165 250 / 0.18);
   padding: 0.7rem 1rem;
   color: white;
   font-size: 0.875rem;
   font-weight: 600;
-  transition: background 150ms ease, border-color 150ms ease, transform 150ms ease;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
 }
 
 .btn:hover {
-  background: rgb(255 255 255 / 0.12);
-  border-color: rgb(59 130 246 / 0.35);
+  background: linear-gradient(135deg, rgb(59 130 246 / 0.28), rgb(99 102 241 / 0.20));
+  border-color: rgb(96 165 250 / 0.4);
+  box-shadow: 0 8px 25px rgb(37 99 235 / 0.10);
 }
 
 .btn:active {
@@ -80,4 +115,87 @@ body {
 
 .iconbtn:hover {
   background: rgb(255 255 255 / 0.09);
+}
+
+/* CampusFlow visual polish */
+main.min-h-screen {
+  background:
+    radial-gradient(circle at 80% 5%, rgb(59 130 246 / 0.08), transparent 30rem),
+    radial-gradient(circle at 20% 55%, rgb(124 58 237 / 0.06), transparent 28rem),
+    #06101d;
+}
+
+main.min-h-screen > div.flex > section {
+  position: relative;
+  background: linear-gradient(180deg, rgb(9 21 37 / 0.28), rgb(6 16 29 / 0.72));
+}
+
+main.min-h-screen > div.flex > section > header {
+  background: rgb(6 16 29 / 0.72);
+  backdrop-filter: blur(18px);
+}
+
+main.min-h-screen > div.flex > section > div {
+  position: relative;
+}
+
+main.min-h-screen > div.flex > section > div::before {
+  content: "";
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 999px;
+  background: rgb(37 99 235 / 0.05);
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+/* Replace the corrupted emoji text in the existing dashboard without changing functionality. */
+main.min-h-screen > div.flex > section > div > div:first-child > div:first-child > h2 {
+  font-size: 0;
+  letter-spacing: -0.025em;
+}
+
+main.min-h-screen > div.flex > section > div > div:first-child > div:first-child > h2::after {
+  content: "Good to see you 👋";
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+@media (min-width: 1024px) {
+  main.min-h-screen > div.flex > section > div > div:first-child > div:first-child > h2::after {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}
+
+section button.group.rounded-2xl {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgb(0 0 0 / 0.12);
+}
+
+section button.group.rounded-2xl::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgb(255 255 255 / 0.035), transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 650ms ease;
+  pointer-events: none;
+}
+
+section button.group.rounded-2xl:hover::after {
+  transform: translateX(120%);
+}
+
+@keyframes campusflow-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+main.min-h-screen > div.flex > aside > div:first-child > div:first-child {
+  animation: campusflow-pulse 4s ease-in-out infinite;
 }
