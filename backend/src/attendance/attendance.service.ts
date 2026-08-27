@@ -96,8 +96,11 @@ export class AttendanceService {
     });
   }
 
+  // The frontend attendance history renders the returned records directly.
+  // Keep this endpoint focused on the records rather than wrapping them in
+  // a summary object that the UI would otherwise ignore.
   async getStudentAttendance(studentId: string) {
-    const records = await this.prisma.attendanceRecord.findMany({
+    return this.prisma.attendanceRecord.findMany({
       where: {
         studentId,
       },
@@ -114,41 +117,6 @@ export class AttendanceService {
         },
       },
     });
-
-    const total = records.length;
-
-    const present = records.filter(
-      (r) => r.status === 'PRESENT',
-    ).length;
-
-    const late = records.filter(
-      (r) => r.status === 'LATE',
-    ).length;
-
-    const absent = records.filter(
-      (r) => r.status === 'ABSENT',
-    ).length;
-
-    const excused = records.filter(
-      (r) => r.status === 'EXCUSED',
-    ).length;
-
-    const percentage =
-      total > 0
-        ? ((present + late * 0.5) / total) * 100
-        : 0;
-
-    return {
-      studentId,
-      totalSessions: total,
-      present,
-      late,
-      absent,
-      excused,
-      attendancePercentage: Number(percentage.toFixed(2)),
-      lowAttendance: percentage < 75,
-      records,
-    };
   }
 
   async getSubjectAttendance(subjectId: number) {
