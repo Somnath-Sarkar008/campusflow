@@ -1,13 +1,7 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="flow" x1="18" y1="22" x2="112" y2="108" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#22D3EE"/>
-      <stop offset="1" stop-color="#2563EB"/>
-    </linearGradient>
-  </defs>
   <rect width="128" height="128" rx="30" fill="#081525"/>
-  <path d="M92 34C82 25 70 21 57 23C36 26 21 43 21 64C21 87 39 105 62 105C75 105 87 100 96 91" stroke="url(#flow)" stroke-width="12" stroke-linecap="round"/>
-  <path d="M45 69C52 76 61 79 70 77C80 75 87 69 92 60" stroke="white" stroke-width="7" stroke-linecap="round" opacity=".95"/>
-  <path d="M40 54L55 43L70 54" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/>
-  <path d="M48 52V67M62 52V69" stroke="white" stroke-width="6" stroke-linecap="round" opacity=".95"/>
+  <path d="M91 37C83 29 73 25 62 25C40 25 23 42 23 64C23 86 40 103 62 103C73 103 84 99 92 91" stroke="#22D3EE" stroke-width="12" stroke-linecap="round"/>
+  <path d="M39 68C48 58 58 55 69 59C76 62 82 67 88 75" stroke="white" stroke-width="8" stroke-linecap="round"/>
+  <path d="M42 68C51 77 61 80 71 77C79 75 85 70 90 63" stroke="#2563EB" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="91" cy="63" r="5" fill="white"/>
 </svg>
