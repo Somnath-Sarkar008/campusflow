@@ -1,26 +1,44 @@
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Space+Grotesk&weight=700&size=38&duration=2800&pause=900&color=2563EB&center=true&vCenter=true&width=900&lines=CampusFlow;Smart+Campus+Management+Platform;One+Campus.+One+Flow.+One+Dashboard."
-alt="CampusFlow animated title" />
+# 🌐 CampusFlow
+
+### Smart Campus Management Platform
+
+**One campus. One flow. One dashboard.**
+
+<p>
+  <a href="https://campusflow-pi.vercel.app"><strong>🚀 Live Demo</strong></a> ·
+  <a href="https://github.com/Somnath-Sarkar008/campusflow"><strong>📦 Repository</strong></a>
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/NestJS-11-E0234E?style=for-the-badge&logo=nestjs" alt="NestJS" />
+  <img src="https://img.shields.io/badge/PostgreSQL-Ready-4169E1?style=for-the-badge&logo=postgresql" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Prisma-7-2D3748?style=for-the-badge&logo=prisma" alt="Prisma" />
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript" />
+</p>
 
 <p>🎓 A full-stack campus management platform for academics, attendance, facilities, bookings and role-based administration.</p>
 
-<p>
-  <a href="https://github.com/Somnath-Sarkar008/campusflow"><img src="https://img.shields.io/github/stars/Somnath-Sarkar008/campusflow?style=for-the-badge" alt="GitHub stars" /></a>
-  <a href="https://github.com/Somnath-Sarkar008/campusflow"><img src="https://img.shields.io/github/forks/Somnath-Sarkar008/campusflow?style=for-the-badge" alt="GitHub forks" /></a>
-  <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/NestJS-11-E0234E?style=for-the-badge&logo=nestjs" alt="NestJS" />
-  <img src="https://img.shields.io/badge/PostgreSQL-Ready-4169E1?style=for-the-badge&logo=postgresql" alt="PostgreSQL" />
-</p>
-
-<p>
-  <a href="#features">Features</a> ·
-  <a href="#architecture">Architecture</a> ·
-  <a href="#getting-started">Getting Started</a> ·
-  <a href="#deployment">Deployment</a>
-</p>
-
 </div>
+
+---
+
+## 🚀 Live Application
+
+**Frontend:** https://campusflow-pi.vercel.app  
+**Backend API:** https://campusflow-ui3o.onrender.com/api  
+**Source Code:** https://github.com/Somnath-Sarkar008/campusflow
+
+> The production frontend is deployed on Vercel, the NestJS API runs on Render, and the application data is stored in managed PostgreSQL.
+
+### Demo login
+
+```text
+Email:    admin@campusflow.local
+Password: CampusFlow@123
+```
 
 ---
 
@@ -30,7 +48,7 @@ alt="CampusFlow animated title" />
 
 Instead of treating attendance, room/resource management, bookings and academic information as separate systems, CampusFlow connects them through a single role-aware backend and dashboard experience.
 
-> **Built as an industry-style full-stack project with a modular NestJS API, PostgreSQL + Prisma data layer, JWT authentication and a Next.js frontend.**
+> Built as an industry-style full-stack project with a modular NestJS API, PostgreSQL + Prisma data layer, JWT authentication and a Next.js frontend.
 
 ## 🚀 Features
 
@@ -38,7 +56,7 @@ Instead of treating attendance, room/resource management, bookings and academic 
 - JWT-based authentication
 - Password hashing with bcrypt
 - Role-based access control
-- Supported roles: Student, Faculty, Technician, Security, Admin and Super Admin
+- Student, Faculty, Technician, Security, Admin and Super Admin roles
 - Protected API routes
 
 ### 🎓 Academic Management
@@ -71,7 +89,10 @@ Instead of treating attendance, room/resource management, bookings and academic 
 ### 📈 Dashboard
 - Centralized campus information
 - Role-aware application modules
-- API-driven data for scalable dashboard experiences
+- API-driven dashboard data
+- Realistic seeded demonstration data
+
+---
 
 ## 🧩 Tech Stack
 
@@ -84,8 +105,8 @@ Instead of treating attendance, room/resource management, bookings and academic 
 | ORM | Prisma 7 |
 | Authentication | JWT, Passport, bcrypt |
 | Validation | class-validator, class-transformer |
-| HTTP Client | Axios |
 | Tooling | ESLint, Prettier, Jest |
+| Deployment | Vercel + Render + Managed PostgreSQL |
 
 ## 🏗️ Architecture
 
@@ -124,7 +145,7 @@ backend/
 
 ## 🗄️ Data Model
 
-The PostgreSQL schema is designed around connected campus entities:
+The PostgreSQL schema connects the major campus entities:
 
 **Users → Roles → Student Profiles → Courses → Subjects → Enrollments → Attendance**
 
@@ -133,6 +154,8 @@ and
 **Buildings → Floors → Rooms → Resources → Bookings**
 
 This keeps academic and facility workflows normalized while leaving room for future modules.
+
+---
 
 ## ⚙️ Getting Started
 
@@ -201,6 +224,8 @@ Open:
 http://localhost:3001
 ```
 
+---
+
 ## 🔑 Environment Variables
 
 Never commit real secrets.
@@ -213,9 +238,11 @@ Never commit real secrets.
 | `PORT` | Backend | API port |
 | `NEXT_PUBLIC_API_URL` | Frontend | Public API base URL |
 
-## 🚢 Deployment
+---
 
-CampusFlow is structured for a split production deployment:
+## 🚢 Production Deployment
+
+CampusFlow uses a split production architecture:
 
 ```text
                  ┌──────────────────────┐
@@ -226,53 +253,42 @@ CampusFlow is structured for a split production deployment:
                             ▼
                  ┌──────────────────────┐
                  │    NestJS Backend    │
-                 │ Render / Railway     │
+                 │       Render        │
                  └──────────┬───────────┘
                             │ Prisma
                             ▼
                  ┌──────────────────────┐
                  │   Managed PostgreSQL │
-                 │   Neon / Supabase    │
+                 │        Neon         │
                  └──────────────────────┘
 ```
 
-### Production variables
+Production endpoints:
 
-**Frontend**
+- **Frontend:** `https://campusflow-pi.vercel.app`
+- **API:** `https://campusflow-ui3o.onrender.com/api`
 
-```env
-NEXT_PUBLIC_API_URL=https://YOUR-BACKEND-DOMAIN/api
-```
+---
 
-**Backend**
+## 🛡️ Production Status
 
-```env
-DATABASE_URL=YOUR_MANAGED_POSTGRES_CONNECTION_STRING
-JWT_SECRET=YOUR_LONG_RANDOM_SECRET
-FRONTEND_URL=https://YOUR-FRONTEND-DOMAIN
-PORT=10000
-```
+- [x] Managed PostgreSQL configured
+- [x] Production JWT authentication configured
+- [x] Production CORS configured
+- [x] Frontend deployed to Vercel
+- [x] Backend deployed to Render
+- [x] Prisma migrations deployed
+- [x] Demo data seeded
+- [x] Authentication tested
+- [x] Attendance workflow tested
+- [x] Booking workflow implemented
+- [x] No production database credentials committed to README
 
-After configuring the production database, run the Prisma deployment migration command:
-
-```bash
-npx prisma migrate deploy
-```
-
-## 🛡️ Production Checklist
-
-- [ ] Configure managed PostgreSQL
-- [ ] Set a strong production `JWT_SECRET`
-- [ ] Set production `FRONTEND_URL`
-- [ ] Set frontend `NEXT_PUBLIC_API_URL`
-- [ ] Run `npm run build` for both applications
-- [ ] Run Prisma migrations with `npx prisma migrate deploy`
-- [ ] Verify authentication and role permissions
-- [ ] Verify CORS from the deployed frontend
-- [ ] Test bookings and attendance end-to-end
-- [ ] Confirm no `.env` files or credentials are committed
+---
 
 ## 📌 Roadmap
+
+Future ideas:
 
 - [ ] Notifications and announcements
 - [ ] Email verification / password recovery
@@ -283,13 +299,16 @@ npx prisma migrate deploy
 - [ ] Audit logs
 - [ ] PWA / mobile-first enhancements
 
+---
+
 ## 👨‍💻 Author
 
-**Somnath Sarkar**
-
+**Somnath Sarkar**  
 B.Tech CSE · Full-Stack Development · AI/ML · Blockchain
 
-[![GitHub](https://img.shields.io/badge/GitHub-Somnath--Sarkar008-181717?style=for-the-badge&logo=github)](https://github.com/Somnath-Sarkar008)
+<p>
+  <a href="https://github.com/Somnath-Sarkar008">GitHub</a>
+</p>
 
 ---
 
