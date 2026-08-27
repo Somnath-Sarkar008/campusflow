@@ -7,6 +7,12 @@ import * as bcrypt from 'bcrypt';
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
+type DemoSubject = {
+  id: number;
+  courseId: number;
+  code: string;
+};
+
 const students = [
   ['Arjun', 'Das', 'arjun.das@campusflow.local', 'CSE-001', 'REG-2026-001'],
   ['Ananya', 'Roy', 'ananya.roy@campusflow.local', 'CSE-002', 'REG-2026-002'],
@@ -47,9 +53,10 @@ async function main() {
     ['Machine Learning', 'AIML-501', 4, Semester.SEMESTER_5, aimlCourse.id],
     ['Digital Signal Processing', 'ECE-401', 4, Semester.SEMESTER_4, eceCourse.id],
   ] as const;
-  const subjects = [];
+  const subjects: DemoSubject[] = [];
   for (const [name, code, credits, semester, courseId] of subjectDefs) {
-    subjects.push(await prisma.subject.upsert({ where: { code }, update: {}, create: { name, code, credits, semester, courseId } }));
+    const subject = await prisma.subject.upsert({ where: { code }, update: {}, create: { name, code, credits, semester, courseId } });
+    subjects.push(subject);
   }
 
   for (let i = 0; i < students.length; i++) {
