@@ -58,6 +58,12 @@ export class AttendanceController {
     return this.attendanceService.getSession(sessionId);
   }
 
+  // Safe response for the UI when no student has been selected yet.
+  @Get('student')
+  getEmptyStudentAttendance() {
+    return [];
+  }
+
   @Get('student/:id')
   getStudentAttendance(
     @Param('id') studentId: string,
