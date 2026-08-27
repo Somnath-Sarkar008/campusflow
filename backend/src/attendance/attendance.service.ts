@@ -29,6 +29,28 @@ export class AttendanceService {
     });
   }
 
+  async getSessions() {
+    return this.prisma.attendanceSession.findMany({
+      include: {
+        subject: true,
+        markedBy: {
+          select: {
+            firstName: true,
+            lastName: true,
+          },
+        },
+        _count: {
+          select: {
+            records: true,
+          },
+        },
+      },
+      orderBy: {
+        sessionDate: 'desc',
+      },
+    });
+  }
+
   async markAttendance(
     sessionId: number,
     dto: MarkAttendanceDto,
