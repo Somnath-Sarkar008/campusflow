@@ -199,3 +199,21 @@ section button.group.rounded-2xl:hover::after {
 main.min-h-screen > div.flex > aside > div:first-child > div:first-child {
   animation: campusflow-pulse 4s ease-in-out infinite;
 }
+
+/* CampusFlow brand mark: replace the remaining hardcoded C without changing layout. */
+.bg-blue-600.text-3xl.font-black {
+  color: transparent;
+  font-size: 0;
+  background-image: url('/campusflow-logo.svg');
+  background-size: cover;
+  background-position: center;
+}
+
+main.min-h-screen > div.sticky > div:first-child > div:first-child,
+main.min-h-screen > div.flex > aside > div:first-child > div:first-child {
+  color: transparent;
+  font-size: 0;
+  background-image: url('/campusflow-logo.svg');
+  background-size: cover;
+  background-position: center;
+}
