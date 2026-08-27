@@ -29,10 +29,15 @@ export class AttendanceController {
   ) {
     const user = req.user as { userId: string };
 
-return this.attendanceService.createSession(
-  dto,
-  user.userId,
-);
+    return this.attendanceService.createSession(
+      dto,
+      user.userId,
+    );
+  }
+
+  @Get('sessions')
+  getSessions() {
+    return this.attendanceService.getSessions();
   }
 
   @Post('sessions/:id/records')
